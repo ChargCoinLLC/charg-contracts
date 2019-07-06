@@ -94,6 +94,64 @@
 		"constant": false,
 		"inputs": [
 			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "authorized",
+				"type": "bool"
+			}
+		],
+		"name": "modifyNodeAuthorization",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "latitude",
+				"type": "uint32"
+			},
+			{
+				"name": "longitude",
+				"type": "uint32"
+			}
+		],
+		"name": "modifyNodeLocation",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "latitude",
+				"type": "uint32"
+			},
+			{
+				"name": "longitude",
+				"type": "uint32"
+			},
+			{
+				"name": "chargRate",
+				"type": "uint256"
+			}
+		],
+		"name": "registerNode",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
 				"name": "orderHash",
 				"type": "bytes32"
 			},
@@ -138,11 +196,11 @@
 				"type": "bytes32"
 			},
 			{
-				"name": "rate",
+				"name": "feedbackRate",
 				"type": "uint8"
 			},
 			{
-				"name": "message",
+				"name": "feedbackText",
 				"type": "string"
 			}
 		],
@@ -156,68 +214,22 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "node",
-				"type": "address"
-			},
-			{
 				"name": "paymentHash",
 				"type": "bytes32"
-			},
-			{
-				"name": "payerHash",
-				"type": "bytes32"
-			},
-			{
-				"name": "serviceId",
-				"type": "uint16"
 			}
 		],
 		"name": "serviceOff",
 		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "node",
+				"name": "nodeAddr",
 				"type": "address"
-			},
-			{
-				"name": "amountCHG",
-				"type": "uint256"
-			},
-			{
-				"name": "serviceId",
-				"type": "uint16"
-			}
-		],
-		"name": "serviceOn",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "node",
-				"type": "address"
-			},
-			{
-				"name": "orderHash",
-				"type": "bytes32"
-			},
-			{
-				"name": "paymentHash",
-				"type": "bytes32"
-			},
-			{
-				"name": "payerHash",
-				"type": "bytes32"
 			},
 			{
 				"name": "serviceId",
@@ -226,10 +238,31 @@
 			{
 				"name": "currencyId",
 				"type": "uint16"
+			},
+			{
+				"name": "time",
+				"type": "uint256"
+			},
+			{
+				"name": "orderHash",
+				"type": "bytes32"
+			},
+			{
+				"name": "payerHash",
+				"type": "bytes32"
+			},
+			{
+				"name": "paymentHash",
+				"type": "bytes32"
 			}
 		],
 		"name": "serviceOn",
-		"outputs": [],
+		"outputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
@@ -265,6 +298,82 @@
 			}
 		],
 		"name": "setFeesAccount",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_newValue",
+				"type": "uint256"
+			}
+		],
+		"name": "setMinCoinsBalance",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "parameterHash",
+				"type": "bytes32"
+			},
+			{
+				"name": "parameterValue",
+				"type": "string"
+			}
+		],
+		"name": "setNodeParameter",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "allowed",
+				"type": "bool"
+			}
+		],
+		"name": "setupCommonService",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "serviceId",
+				"type": "uint16"
+			},
+			{
+				"name": "allowed",
+				"type": "bool"
+			},
+			{
+				"name": "rate",
+				"type": "uint256"
+			},
+			{
+				"name": "maxTime",
+				"type": "uint256"
+			}
+		],
+		"name": "setupNodeService",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -354,6 +463,50 @@
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "fallback"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "latitude",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "longitude",
+				"type": "uint256"
+			}
+		],
+		"name": "NodeRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "latitude",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "longitude",
+				"type": "uint256"
+			}
+		],
+		"name": "NodeModified",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -590,11 +743,11 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"name": "node",
+				"name": "nodeAddr",
 				"type": "address"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"name": "payer",
 				"type": "address"
 			},
@@ -620,7 +773,12 @@
 			},
 			{
 				"indexed": false,
-				"name": "amount",
+				"name": "chgAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "serviceTime",
 				"type": "uint256"
 			}
 		],
@@ -632,11 +790,11 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"name": "node",
+				"name": "nodeAddr",
 				"type": "address"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"name": "payer",
 				"type": "address"
 			},
@@ -654,9 +812,66 @@
 				"indexed": false,
 				"name": "serviceId",
 				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"name": "currencyId",
+				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"name": "chgAmount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "serviceTime",
+				"type": "uint256"
 			}
 		],
 		"name": "ServiceOff",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "nodeAddr",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "payer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "paymentHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "payerHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "serviceId",
+				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"name": "currencyId",
+				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"name": "feedbackRate",
+				"type": "uint8"
+			}
+		],
+		"name": "Feedback",
 		"type": "event"
 	},
 	{
@@ -730,37 +945,66 @@
 	},
 	{
 		"constant": true,
+		"inputs": [],
+		"name": "minCoinsBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
 		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			},
 			{
 				"name": "",
 				"type": "bytes32"
 			}
 		],
-		"name": "feedbacks",
+		"name": "nodeParameters",
 		"outputs": [
 			{
-				"name": "enabled",
-				"type": "bool"
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
 			},
 			{
-				"name": "completed",
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"name": "nodeService",
+		"outputs": [
+			{
+				"name": "allowed",
 				"type": "bool"
 			},
 			{
 				"name": "rate",
-				"type": "uint8"
+				"type": "uint256"
 			},
 			{
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"name": "serviceId",
-				"type": "uint16"
-			},
-			{
-				"name": "message",
-				"type": "string"
+				"name": "maxTime",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -775,6 +1019,37 @@
 			{
 				"name": "",
 				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "registeredNodes",
+		"outputs": [
+			{
+				"name": "registered",
+				"type": "bool"
+			},
+			{
+				"name": "authorized",
+				"type": "bool"
+			},
+			{
+				"name": "latitude",
+				"type": "uint32"
+			},
+			{
+				"name": "longitude",
+				"type": "uint32"
 			}
 		],
 		"payable": false,
@@ -806,6 +1081,98 @@
 			{
 				"name": "expire",
 				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"name": "serviceActions",
+		"outputs": [
+			{
+				"name": "started",
+				"type": "uint256"
+			},
+			{
+				"name": "finished",
+				"type": "uint256"
+			},
+			{
+				"name": "node",
+				"type": "address"
+			},
+			{
+				"name": "payer",
+				"type": "address"
+			},
+			{
+				"name": "payerHash",
+				"type": "bytes32"
+			},
+			{
+				"name": "serviceRate",
+				"type": "uint256"
+			},
+			{
+				"name": "serviceId",
+				"type": "uint16"
+			},
+			{
+				"name": "currencyId",
+				"type": "uint16"
+			},
+			{
+				"name": "feedbackRate",
+				"type": "uint8"
+			},
+			{
+				"name": "feedbackText",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"name": "services",
+		"outputs": [
+			{
+				"name": "allowed",
+				"type": "bool"
+			},
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "servicesCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint16"
 			}
 		],
 		"payable": false,
