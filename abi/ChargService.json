@@ -113,32 +113,42 @@
 		"inputs": [
 			{
 				"name": "latitude",
-				"type": "uint32"
+				"type": "int128"
 			},
 			{
 				"name": "longitude",
-				"type": "uint32"
-			}
-		],
-		"name": "modifyNodeLocation",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "latitude",
-				"type": "uint32"
+				"type": "int128"
 			},
 			{
-				"name": "longitude",
-				"type": "uint32"
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"name": "connector",
+				"type": "string"
+			},
+			{
+				"name": "power",
+				"type": "string"
 			},
 			{
 				"name": "chargRate",
+				"type": "uint256"
+			},
+			{
+				"name": "parkRate",
+				"type": "uint256"
+			},
+			{
+				"name": "inetRate",
 				"type": "uint256"
 			}
 		],
@@ -468,44 +478,47 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"name": "addr",
 				"type": "address"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"name": "latitude",
-				"type": "uint256"
+				"type": "int128"
+			},
+			{
+				"indexed": true,
+				"name": "longitude",
+				"type": "int128"
 			},
 			{
 				"indexed": false,
-				"name": "longitude",
-				"type": "uint256"
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "connector",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "power",
+				"type": "string"
 			}
 		],
 		"name": "NodeRegistered",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "addr",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "latitude",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "longitude",
-				"type": "uint256"
-			}
-		],
-		"name": "NodeModified",
 		"type": "event"
 	},
 	{
@@ -1045,11 +1058,31 @@
 			},
 			{
 				"name": "latitude",
-				"type": "uint32"
+				"type": "int128"
 			},
 			{
 				"name": "longitude",
-				"type": "uint32"
+				"type": "int128"
+			},
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"name": "connector",
+				"type": "string"
+			},
+			{
+				"name": "power",
+				"type": "string"
 			}
 		],
 		"payable": false,

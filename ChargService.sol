@@ -22,9 +22,16 @@ contract ChargService is Ownable {
 		bool registered;
 		bool authorized;
 
-        /* lat, lon values, multiplied by 10^10 */
-		uint32 latitude;
-		uint32 longitude;
+        /* lat, lon values, multiplied by 10^7 */
+		int128 latitude;
+		int128 longitude;
+
+		/* main parameters */
+		string name;
+		string phone;
+		string location;
+		string connector;
+		string power;
 	}
 
 
@@ -112,8 +119,8 @@ contract ChargService is Ownable {
 
 
 	/*   events    */
- 	event NodeRegistered ( address addr, uint latitude, uint longitude );
-	event NodeModified  ( address addr, uint latitude, uint longitude );
+ 	event NodeRegistered ( address indexed addr, int128 indexed latitude, int128 indexed longitude, string name, string location, string phone, string connector, string power );
+	//event NodeModified  ( address indexed addr, int128 indexed latitude, int128 indexed longitude, string name, string location, string phone, string connector, string power );
 
 	event DepositEther  ( address sender, uint EthValue, uint EthBalance );
 	event WithdrawEther ( address sender, uint EthValue, uint EthBalance );
@@ -147,7 +154,15 @@ contract ChargService is Ownable {
 		services[servicesCount].name = 'Charging';
 		services[servicesCount].allowed = true;
 		servicesCount++;
-	
+
+		services[servicesCount].name = 'Parking';
+		services[servicesCount].allowed = true;
+		servicesCount++;
+
+		services[servicesCount].name = 'Internet';
+		services[servicesCount].allowed = true;
+		servicesCount++;
+
 		//set default fees in %
 		swapCoins[swapCoinsCount].coin = 'CHG';
 		swapCoins[swapCoinsCount].allowed = true;
@@ -158,6 +173,22 @@ contract ChargService is Ownable {
 		swapCoins[swapCoinsCount].allowed = true;
 		swapCoins[swapCoinsCount].fee = 1;
 		swapCoinsCount++;
+
+		swapCoins[swapCoinsCount].coin = 'BTC';
+		swapCoins[swapCoinsCount].allowed = true;
+		swapCoins[swapCoinsCount].fee = 2;
+		swapCoinsCount++;
+
+		swapCoins[swapCoinsCount].coin = 'LTC';
+		swapCoins[swapCoinsCount].allowed = true;
+		swapCoins[swapCoinsCount].fee = 2;
+		swapCoinsCount++;
+
+		swapCoins[swapCoinsCount].coin = 'USD';
+		swapCoins[swapCoinsCount].allowed = true;
+		swapCoins[swapCoinsCount].fee = 4;
+		swapCoinsCount++;
+
     }
 
 	function() public payable {
@@ -182,16 +213,27 @@ contract ChargService is Ownable {
 
 
     /* register a new node */
-    function registerNode( uint32 latitude, uint32 longitude, string name, string location, uint chargRate) public {
+    function registerNode( int128 latitude, int128 longitude, string name, string location, string phone, string connector, string power, uint chargRate, uint parkRate, uint inetRate) public {
 
-        require (!registeredNodes[msg.sender].registered);
+		// check if node not regestered, or authorized for update
+        require ( !registeredNodes[msg.sender].registered || registeredNodes[msg.sender].authorized );
+
+		// check minimal coins balance
         require (chargCoinContractInstance.balanceOf(msg.sender)>minCoinsBalance);
 
-		registeredNodes[msg.sender].registered = true;
-		registeredNodes[msg.sender].authorized = true;
+		if (!registeredNodes[msg.sender].registered) {
+			registeredNodes[msg.sender].registered = true;
+			registeredNodes[msg.sender].authorized = true;
+		}
 
 		registeredNodes[msg.sender].latitude = latitude;
 		registeredNodes[msg.sender].longitude = longitude;
+
+		registeredNodes[msg.sender].name = name;
+		registeredNodes[msg.sender].location = location;
+		registeredNodes[msg.sender].phone = phone;
+		registeredNodes[msg.sender].connector = connector;
+		registeredNodes[msg.sender].power = power;
 
         if (chargRate > 0) {
 			nodeService[msg.sender][0].allowed = true;
@@ -199,30 +241,31 @@ contract ChargService is Ownable {
 			nodeService[msg.sender][0].rate = chargRate;
 		}
 
-		const bytes32 nameHashed = keccak256('name');
-		const bytes32 locationHashed = keccak256('location');
+        if (parkRate > 0) {
+			nodeService[msg.sender][1].allowed = true;
+			nodeService[msg.sender][1].maxTime = 0;
+			nodeService[msg.sender][1].rate = parkRate;
+		}
 
-		setNodeParameter(nameHashed, name);
-		setNodeParameter(locationHashed, location);
+        if (inetRate > 0) {
+			nodeService[msg.sender][2].allowed = true;
+			nodeService[msg.sender][2].maxTime = 0;
+			nodeService[msg.sender][2].rate = inetRate;
+		}
 
-		NodeRegistered( msg.sender, latitude, longitude );
+		setNodeParameter(keccak256('name'), name);
+		setNodeParameter(keccak256('location'), location);
+		setNodeParameter(keccak256('phone'), phone);
+		setNodeParameter(keccak256('connector'), connector);
+		setNodeParameter(keccak256('power'), power);
+
+		NodeRegistered( msg.sender, latitude, longitude, name, location, phone, connector, power );
 	}
 
 
-    function modifyNodeLocation(uint32 latitude, uint32 longitude) public {
-        require (!registeredNodes[msg.sender].authorized);
-        require (chargCoinContractInstance.balanceOf(msg.sender)>minCoinsBalance);
-
-		registeredNodes[msg.sender].latitude = latitude;
-		registeredNodes[msg.sender].longitude = longitude;
-
-		NodeModified( msg.sender, latitude, longitude );
-    }
-    
-
     /* setup the node parameters */
     function setNodeParameter(bytes32 parameterHash, string parameterValue) public {
-        //require (registeredNodes[msg.sender].authorized);
+        require (registeredNodes[msg.sender].authorized);
         nodeParameters[msg.sender][parameterHash] = parameterValue;
     }
 	
@@ -464,8 +507,12 @@ contract ChargService is Ownable {
 		} else {  // CHG payment
 			require ( time <= nodeService[nodeAddr][serviceId].maxTime || nodeService[nodeAddr][serviceId].maxTime == 0);
 			chgAmount = time * nodeService[nodeAddr][serviceId].rate;
-			require( chgAmount > 0 && 0 <= coinBalance[msg.sender].sub(chgAmount) );
-			coinBalance[msg.sender] = coinBalance[msg.sender].sub(chgAmount);
+			require( chgAmount > 0 );
+			if ( chgAmount <= coinBalance[msg.sender] ) {
+				coinBalance[msg.sender] = coinBalance[msg.sender].sub(chgAmount);
+			} else {
+				require (chargCoinContractInstance.transferFrom(msg.sender, this, chgAmount));
+			}
 		}
 
 		//require(chargCoinContractInstance.transfer(nodeAddr, chgAmount));
