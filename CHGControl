@@ -1,0 +1,46 @@
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract CHGControl {
+    mapping(address => address) public controlledAddresses;
+    mapping(address => bool) public isAdmin;
+
+    modifier onlyAdmin() {
+        require(isAdmin[msg.sender], "Only admins can call this function");
+        _;
+    }
+
+    modifier onlyControlled() {
+        require(controlledAddresses[msg.sender] != address(0), "Only controlled addresses can call this function");
+        _;
+    }
+
+    function addAdmin(address newAdmin) public onlyAdmin {
+        isAdmin[newAdmin] = true;
+    }
+
+    function removeAdmin(address adminToRemove) public onlyAdmin {
+        require(adminToRemove != msg.sender, "Cannot remove yourself as admin");
+        isAdmin[adminToRemove] = false;
+    }
+
+    function authorizeControl(address controlledAddress) public onlyAdmin {
+        controlledAddresses[controlledAddress] = msg.sender;
+    }
+
+    function revokeControl(address controlledAddress) public onlyAdmin {
+        require(controlledAddresses[controlledAddress] == msg.sender, "Not authorized to revoke control");
+        controlledAddresses[controlledAddress] = address(0);
+    }
+
+    function executeTransaction(
+        address payable target,
+        uint256 value,
+        bytes calldata data
+    ) external onlyControlled returns (bool, bytes memory) {
+        (bool success, bytes memory result) = target.call{value: value}(data);
+        require(success, "Execution failed");
+        return (success, result);
+    }
+}
