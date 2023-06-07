@@ -1,2 +1,2 @@
 # charg-contracts
-The Charg.io Smart Contracts
+zchg.org originals! Smart Contracts which really are smart!
